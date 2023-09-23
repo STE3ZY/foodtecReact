@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
@@ -13,6 +13,23 @@ import {
 const PizzaMenu = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedSizes, setSelectedSizes] = useState({});
+  const [editedPrices, setEditedPrices] = useState({});
+
+  // Function to initialize selectedSizes with all sizes selected
+  const initializeSelectedSizes = () => {
+    const initialSelectedSizes = {};
+    pizzaItems.forEach((item) => {
+      initialSelectedSizes[item.itemId] = {};
+      Sizes.forEach((size) => {
+        initialSelectedSizes[item.itemId][size.sizeId] = true;
+      });
+    });
+    setSelectedSizes(initialSelectedSizes);
+  };
+
+  useEffect(() => {
+    initializeSelectedSizes();
+  }, []); // Empty dependency array to run this effect only once on page load
 
   const handleItemClick = (itemId) => {
     setSelectedItem(selectedItem === itemId ? null : itemId);
@@ -20,14 +37,30 @@ const PizzaMenu = () => {
 
   const handleSizeChange = (itemId, sizeId) => {
     const newSizeState = { ...selectedSizes };
+    if (!newSizeState[itemId]) {
+      newSizeState[itemId] = {};
+    }
+    newSizeState[itemId][sizeId] = !newSizeState[itemId][sizeId];
 
-    if (newSizeState[itemId] && newSizeState[itemId][sizeId]) {
-      newSizeState[itemId][sizeId] = false;
-    } else {
-      newSizeState[itemId] = { ...newSizeState[itemId], [sizeId]: true };
+    // Clear the edited price for the size when unchecking
+    if (!newSizeState[itemId][sizeId]) {
+      const newEditedPrices = { ...editedPrices };
+      if (newEditedPrices[itemId] && newEditedPrices[itemId][sizeId]) {
+        delete newEditedPrices[itemId][sizeId];
+      }
+      setEditedPrices(newEditedPrices);
     }
 
     setSelectedSizes(newSizeState);
+  };
+
+  const handlePriceChange = (itemId, sizeId, newPrice) => {
+    const newEditedPrices = { ...editedPrices };
+    if (!newEditedPrices[itemId]) {
+      newEditedPrices[itemId] = {};
+    }
+    newEditedPrices[itemId][sizeId] = parseFloat(newPrice);
+    setEditedPrices(newEditedPrices);
   };
 
   const getPrices = (itemId) => {
@@ -35,7 +68,11 @@ const PizzaMenu = () => {
   };
 
   const getItemSizePrice = (itemId, sizeId) => {
-    if (selectedSizes[itemId] && !selectedSizes[itemId][sizeId]) {
+    if (editedPrices[itemId] && editedPrices[itemId][sizeId] !== undefined) {
+      return editedPrices[itemId][sizeId];
+    }
+
+    if (!selectedSizes[itemId] || !selectedSizes[itemId][sizeId]) {
       return 0.0;
     }
 
@@ -64,12 +101,12 @@ const PizzaMenu = () => {
                     <input
                       type="checkbox"
                       className="custom-checkbox"
+                      onChange={() =>
+                        handleSizeChange(item.itemId, size.sizeId)
+                      }
                       checked={
                         selectedSizes[item.itemId] &&
                         selectedSizes[item.itemId][size.sizeId]
-                      }
-                      onChange={() =>
-                        handleSizeChange(item.itemId, size.sizeId)
                       }
                     />
                     <div>{size.name}</div>
@@ -77,10 +114,14 @@ const PizzaMenu = () => {
                       <span>$</span>
                       <input
                         type="number"
-                        value={getItemSizePrice(
-                          item.itemId,
-                          size.sizeId
-                        ).toFixed(2)}
+                        value={getItemSizePrice(item.itemId, size.sizeId)}
+                        onChange={(e) =>
+                          handlePriceChange(
+                            item.itemId,
+                            size.sizeId,
+                            e.target.value
+                          )
+                        }
                         disabled={
                           !selectedSizes[item.itemId] ||
                           !selectedSizes[item.itemId][size.sizeId]
