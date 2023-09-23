@@ -1,3 +1,12 @@
+.accordion {
+  --bs-accordion-border-color: #ffffff;
+}
+
+.collapsed {
+  margin-bottom: 10px;
+  box-shadow: 1px 1px 2px 1px rgba(78, 77, 77, 0.5);
+}
+
 .accordion-button:not(.collapsed) {
   background-color: #e3f0f8;
   box-shadow: none;
@@ -5,18 +14,20 @@
 
 .accordion-body {
   background-color: #e3f0f8;
+  margin-bottom: 10px;
 }
 
 .size-options {
   list-style: none;
   display: flex;
+  padding-left: 0;
 }
 
 .size-options label {
-  margin: 2rem;
+  margin-right: 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+
   align-items: center;
 }
 
@@ -26,10 +37,6 @@
   width: 20px;
   height: 20px;
   accent-color: #7ca2b7;
-}
-
-.custom-checkbox::before {
-  background-color: #ffffff !important;
 }
 
 .price-group {
