@@ -1,0 +1,53 @@
+.accordion-button:not(.collapsed) {
+  background-color: #e3f0f8;
+  box-shadow: none;
+}
+
+.accordion-body {
+  background-color: #e3f0f8;
+}
+
+.size-options {
+  list-style: none;
+  display: flex;
+}
+
+.size-options label {
+  margin: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-checkbox {
+  margin: 4px 0 0;
+  line-height: normal;
+  width: 20px;
+  height: 20px;
+  accent-color: #7ca2b7;
+}
+
+.custom-checkbox::before {
+  background-color: #ffffff !important;
+}
+
+.price-group {
+  border: 2px solid #7ca2b7;
+  border-radius: 4px;
+}
+
+.price-group input {
+  background-color: #ffffff;
+  width: 70px;
+  border: none;
+  border-radius: 4px;
+  color: black;
+  text-align: center;
+}
+
+.price-group span {
+  background-color: #7ca2b7;
+  padding: 3px 6px;
+  color: white;
+}
