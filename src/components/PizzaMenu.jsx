@@ -54,7 +54,9 @@ const PizzaMenu = () => {
     if (!newSizeState[itemId]) {
       newSizeState[itemId] = {};
     }
-    newSizeState[itemId][sizeId] = !newSizeState[itemId][sizeId];
+
+    const isCurrentlySelected = newSizeState[itemId][sizeId];
+    newSizeState[itemId][sizeId] = !isCurrentlySelected;
 
     // Clear the edited price for the size when unchecking
     if (!newSizeState[itemId][sizeId]) {
@@ -62,6 +64,26 @@ const PizzaMenu = () => {
       if (newEditedPrices[itemId] && newEditedPrices[itemId][sizeId]) {
         delete newEditedPrices[itemId][sizeId];
         setEditedPrices(newEditedPrices);
+        // Update local storage when unchecked
+        saveEditedPrices(newEditedPrices);
+      }
+    } else {
+      // Set the default price when checked again
+      const newEditedPrices = { ...editedPrices };
+      if (!newEditedPrices[itemId]) {
+        newEditedPrices[itemId] = {};
+      }
+
+      // Retrieve the default price from the `Prices` array
+      const defaultPrice = Prices.find(
+        (price) => price.itemId === itemId && price.sizeId === sizeId
+      );
+
+      if (defaultPrice) {
+        newEditedPrices[itemId][sizeId] = defaultPrice.price;
+        setEditedPrices(newEditedPrices);
+        // Update local storage when checked again with the default price
+        saveEditedPrices(newEditedPrices);
       }
     }
 
