@@ -27,9 +27,23 @@ const PizzaMenu = () => {
     setSelectedSizes(initialSelectedSizes);
   };
 
+  // Function to load edited prices from local storage
+  const loadEditedPrices = () => {
+    const storedPrices = JSON.parse(localStorage.getItem("editedPrices"));
+    if (storedPrices) {
+      setEditedPrices(storedPrices);
+    }
+  };
+
   useEffect(() => {
     initializeSelectedSizes();
+    loadEditedPrices();
   }, []); // Empty dependency array to run this effect only once on page load
+
+  // Function to save edited prices to local storage
+  const saveEditedPrices = (newEditedPrices) => {
+    localStorage.setItem("editedPrices", JSON.stringify(newEditedPrices));
+  };
 
   const handleItemClick = (itemId) => {
     setSelectedItem(selectedItem === itemId ? null : itemId);
@@ -47,8 +61,8 @@ const PizzaMenu = () => {
       const newEditedPrices = { ...editedPrices };
       if (newEditedPrices[itemId] && newEditedPrices[itemId][sizeId]) {
         delete newEditedPrices[itemId][sizeId];
+        setEditedPrices(newEditedPrices);
       }
-      setEditedPrices(newEditedPrices);
     }
 
     setSelectedSizes(newSizeState);
@@ -61,10 +75,7 @@ const PizzaMenu = () => {
     }
     newEditedPrices[itemId][sizeId] = parseFloat(newPrice);
     setEditedPrices(newEditedPrices);
-  };
-
-  const getPrices = (itemId) => {
-    return Prices.filter((price) => price.itemId === itemId);
+    saveEditedPrices(newEditedPrices); // Save the edited prices to local storage
   };
 
   const getItemSizePrice = (itemId, sizeId) => {
