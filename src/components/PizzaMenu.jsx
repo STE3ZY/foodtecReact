@@ -8,7 +8,7 @@ import {
   items as pizzaItems,
   itemPrices as Prices,
   itemSizes as Sizes,
-} from "./data"; // Import the data from data.ts
+} from "./data"; // Import the data from data.json
 
 const PizzaMenu = () => {
   const [selectedItem, setSelectedItem] = useState(null);
